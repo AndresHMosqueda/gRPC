@@ -6,6 +6,7 @@ import (
 	"helloGRPC/hello/hellopb"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -24,6 +25,25 @@ func (*server) Hello(ctx context.Context, req *hellopb.HelloRequest) (*hellopb.H
 		CustomHello: customHello,
 	}
 	return res, nil
+}
+
+func (*server) HelloManyLanguages(req *hellopb.HelloManyLanguagesRequest, stream hellopb.HelloService_HelloManyLanguagesServer) error {
+	fmt.Printf("HelloManyLanguages invoked!! %v 🚀", req)
+	langs := [3]string{"Salut! ", "Hola! ", "Hi! "}
+
+	firstName := req.GetHello().GetFirstName()
+	prefix := req.GetHello().GetPrefix()
+
+	for _, helloLang := range langs {
+		helloLanguage := helloLang + prefix + " " + firstName
+
+		res := &hellopb.HelloManyLanguagesResponse{
+			AnyHello: helloLanguage,
+		}
+		stream.Send(res)
+		time.Sleep(1000 * time.Millisecond)
+	}
+	return nil
 }
 
 func main() {
