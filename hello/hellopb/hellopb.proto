@@ -25,10 +25,22 @@ message HelloManyLanguagesResponse {
     string any_hello = 1;
 }
 
+message HelloGoodByeRequest {
+    Hello hello = 1;
+}
+
+message HelloGoodByeResponse {
+    string goodbye = 1;
+}
+
 service HelloService {
     //Unary
     rpc Hello(HelloRequest) returns  (HelloResponse);
 
     //Server streaming
     rpc HelloManyLanguages(HelloManyLanguagesRequest) returns (stream HelloManyLanguagesResponse);
+
+    //Client streaming
+    //Send many hello and response with only one goodbye message for all the people
+    rpc HelloGoodBye(stream HelloGoodByeRequest) returns (HelloGoodByeResponse);
 }

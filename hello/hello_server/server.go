@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"helloGRPC/hello/hellopb"
+	"io"
 	"log"
 	"net"
 	"time"
@@ -44,6 +45,32 @@ func (*server) HelloManyLanguages(req *hellopb.HelloManyLanguagesRequest, stream
 		time.Sleep(1000 * time.Millisecond)
 	}
 	return nil
+}
+
+func (*server) HelloGoodBye(stream hellopb.HelloService_HelloGoodByeServer) error {
+	fmt.Println("HelloGoodBye invoked!! 🚀")
+
+	goodbye := "Adios perros! "
+
+	for {
+		req, err := stream.Recv()
+
+		if err == io.EOF {
+			//Once the stream is finished we are going to send the response
+
+			return stream.SendAndClose(&hellopb.HelloGoodByeResponse{Goodbye: goodbye})
+		}
+
+		if err != nil {
+			log.Fatalf("Error reading the client stream %v", err)
+		}
+
+		firstName := req.GetHello().GetFirstName()
+		prefix := req.GetHello().GetPrefix()
+
+		goodbye += prefix + " " + firstName + " "
+
+	}
 }
 
 func main() {
