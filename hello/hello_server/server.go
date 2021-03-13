@@ -73,6 +73,36 @@ func (*server) HelloGoodBye(stream hellopb.HelloService_HelloGoodByeServer) erro
 	}
 }
 
+func (*server) GoodByeBidirectional(stream hellopb.HelloService_GoodByeBidirectionalServer) error {
+	fmt.Println("GoodByeBidirectional invoked!! 🚀")
+	for {
+		req, err := stream.Recv()
+
+		if err == io.EOF {
+			//Once the stream is finished respond nil
+			return nil
+		}
+
+		if err != nil {
+			log.Fatalf("Error reading the client stream %v", err)
+			return nil
+		}
+
+		firstName := req.GetHello().GetFirstName()
+		prefix := req.GetHello().GetPrefix()
+
+		goodbye := "Goodbye " + prefix + " " + firstName + " "
+
+		sendErr := stream.Send(&hellopb.GoodByeBidirectionalResponse{
+			Goodbye: goodbye,
+		})
+
+		if sendErr != nil {
+			log.Fatalf("Error reading the client stream %v", err)
+		}
+	}
+}
+
 func main() {
 	fmt.Println("Go server running!!🚀")
 

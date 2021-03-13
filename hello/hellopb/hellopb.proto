@@ -33,6 +33,14 @@ message HelloGoodByeResponse {
     string goodbye = 1;
 }
 
+message GoodByeBidirectionalRequest {
+    Hello hello = 1;
+}
+
+message GoodByeBidirectionalResponse {
+    string goodbye = 1;
+}
+
 service HelloService {
     //Unary
     rpc Hello(HelloRequest) returns  (HelloResponse);
@@ -43,4 +51,8 @@ service HelloService {
     //Client streaming
     //Send many hello and response with only one goodbye message for all the people
     rpc HelloGoodBye(stream HelloGoodByeRequest) returns (HelloGoodByeResponse);
+
+    //Bidirectional streaming
+    rpc GoodByeBidirectional(stream GoodByeBidirectionalRequest) returns (stream GoodByeBidirectionalResponse);
+
 }
